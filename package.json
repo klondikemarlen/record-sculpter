@@ -1,25 +1,42 @@
 {
-	"name": "record-sculpter",
-	"version": "1.0.0",
-	"description": "A flexible library for serializing records into customizable views written in TypeScript. Inspired by Blueprinter, Record Sculpter aims to provide a simple yet powerful way to present and manipulate data objects.",
-	"main": "index.js",
-	"scripts": {},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/klondikemarlen/record-sculpter.git"
-	},
-	"keywords": [
-		"serialization",
-		"custom-views",
-		"field-mapping",
-		"data-transformation",
-		"json",
-		"typescript"
-	],
-	"author": "Marlen",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/klondikemarlen/record-sculpter/issues"
-	},
-	"homepage": "https://github.com/klondikemarlen/record-sculpter#readme"
+  "name": "record-sculpter",
+  "version": "1.0.0",
+  "description": "A flexible library for serializing records into customizable views written in TypeScript. Inspired by Blueprinter, Record Sculpter aims to provide a simple yet powerful way to present and manipulate data objects.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "prettify": "prettier --config .prettierrc 'src/**/*.ts' --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klondikemarlen/record-sculpter.git"
+  },
+  "keywords": [
+    "serialization",
+    "custom-views",
+    "field-mapping",
+    "data-transformation",
+    "json",
+    "typescript"
+  ],
+  "author": "Marlen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/klondikemarlen/record-sculpter/issues"
+  },
+  "homepage": "https://github.com/klondikemarlen/record-sculpter#readme",
+  "devDependencies": {
+    "@types/lodash": "^4.14.197",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "eslint": "^8.48.0",
+    "eslint-config-standard-with-typescript": "^39.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-n": "^16.0.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }
