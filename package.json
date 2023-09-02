@@ -1,0 +1,25 @@
+{
+	"name": "record-sculpter",
+	"version": "1.0.0",
+	"description": "A flexible library for serializing records into customizable views written in TypeScript. Inspired by Blueprinter, Record Sculpter aims to provide a simple yet powerful way to present and manipulate data objects.",
+	"main": "index.js",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/klondikemarlen/record-sculpter.git"
+	},
+	"keywords": [
+		"serialization",
+		"custom-views",
+		"field-mapping",
+		"data-transformation",
+		"json",
+		"typescript"
+	],
+	"author": "Marlen",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/klondikemarlen/record-sculpter/issues"
+	},
+	"homepage": "https://github.com/klondikemarlen/record-sculpter#readme"
+}
