@@ -29,7 +29,14 @@ class UserSerializer extends recordSculptor.Base<User> {
 
   protected registerDefaultView() {
     const defaultView = this.addView("default")
-    defaultView.addfields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+    defaultView.addfields(
+      "id",
+      "email",
+      "firstName",
+      "lastName",
+      "isAdmin",
+      "createdAt"
+    )
 
     defaultView.addField(
       "displayName",
@@ -54,16 +61,26 @@ router.get("/users", (request: Request, response: Response) => {
 
   const serializedUsers = UserSerializer.serialize(users) // Data presentation/serialization
 
-  return response.status(200).json({ data: serializedUsers }) // Send data and handle errors
+  return response.status(200).json({ data: serializedUsers }) // Send data
 })
 
 router.get("/users/:id", (request: Request, response: Response) => {
+  const user = User.findByPk(request.params.id) // Retrieval from database, using Sequelize in this example
 
+  if (user === null) {
+    return response.status(404).json({ message: "User not found" }) // Handle errors
+  }
+
+  const serializedUser = UserSerializer.serialize(user) // Data presentation/serialization
+
+  response.status(200).json({ data: serializedUser }) // Send data
 })
 ```
 
 ```typescript
 // src/models/user.ts
+import { Role } from "@/models"
+
 class User {
   constructor(
     public id: number,
@@ -77,74 +94,19 @@ class User {
 }
 ```
 
+```typescript
+class Role {
+  constructor(
+    public id: number,
+    public userId: number,
+    public name: string,
+  ) {}
+}
+```
+
 ### More Realistic Usage
 
-TODO: validate this code
-
-Includes everything from the simplistic usage, except the routes section.
-
-```typescript
-// src/constrollers/base-controller.ts
-import express, { type Request, type Response, type NextFuction } from "express"
-
-export class BaseController {
-  construtor(public request: Request, public response: Response, public next: NextFunction) {}
-
-  static index(request: Request, response: Response, next: NextFunction) {
-    const controller = new this(request, response, next)
-    return controller.index()
-  }
-
-  static show(request: Request, response: Response, next: NextFunction) {
-    const controller = new this(request, response, next)
-    return controller.show()
-  }
-
-  index() {
-    throw new Error("Not implemented")
-  }
-
-  show() {
-    throw new Error("Not implemented")
-  }
-}
-```
-
-```typescript
-// src/controllers/users-controller.ts
-import { BaseController } from "@/controllers"
-import { UserSerializer } from "@/serializers"
-import { User } from "@/models"
-
-export class UsersController extends BaseController {
-  async index() {
-    await const users = User.findAll() // Retrieval from database, using Sequelize in this example
-
-    const serializedUsers = UserSerializer.serialize(users) // Data presentation/serialization
-
-   return this.response.status(200).json({ users: serializedUsers }) // Return data
-  }
-
-  async show() {
-    const user = await User.findByPk(this.params.id) // Retrieval from database, using Sequelize in this example
-
-    if (user === null) return this.response.status(404).json({ message: "User not found" }) // Return 404 if user not found
-
-    const serializedUser = UserSerializer.serialize(user) // Data presentation/serialization
-
-    return this.response.status(200).json({ user: serialized }) // Return data
-  }
-}
-```
-
-```typescript
-// src/routes.ts
-export const router = express.Router()
-
-// Just like with Rails -> https://guides.rubyonrails.org/routing.html
-router.get("/users", UsersController.index)
-router.get("/users/:id", UsersController.show)
-```
+See [examples/REAMDME.md](./examples/REAMDME.md)
 
 ## Development
 
