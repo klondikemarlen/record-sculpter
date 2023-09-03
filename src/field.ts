@@ -15,12 +15,12 @@ export class Field<Model> {
   constructor(
     method: string,
     optionsOrExtractor?: Extractor<Model> | FieldConstructorOptions<Model>,
-    options?: FieldConstructorOptions<Model>
+    options?: FieldConstructorOptions<Model>,
   )
   constructor(
     method: string,
     optionsOrExtractor?: Extractor<Model> | FieldConstructorOptions<Model>,
-    options?: FieldConstructorOptions<Model>
+    options?: FieldConstructorOptions<Model>,
   ) {
     if (isFunction(optionsOrExtractor)) {
       this.method = method

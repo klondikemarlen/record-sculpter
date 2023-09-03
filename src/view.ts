@@ -25,7 +25,7 @@ export class View<Model extends Record<string, any>> {
         }
         return result
       },
-      {}
+      {},
     )
   }
 

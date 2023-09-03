@@ -30,7 +30,7 @@ export default class BaseSerializer<Model extends Record<string, any>> {
 
   public static serialize<Model extends Record<string, any>>(
     modelOrModels: Model | Model[],
-    options: SerializationOptions = {}
+    options: SerializationOptions = {},
   ): Record<string, any>[] | Record<string, any> {
     const instance = new this(modelOrModels)
     return instance.serialize(options)
