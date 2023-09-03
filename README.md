@@ -20,31 +20,41 @@ TODO: validate this code
 // src/serializers/user-serialiser.ts
 import recordSculptor from "record-sculptor"
 
-import { user } from "@/models"
+import { User, Role } from "@/models"
 
-class UserSerializer extends recordSculptor.Base<User> {
-  constructor(userOrUsers: User | User[]) {
-    super(userOrUsers)
-  }
+import { RoleSerializer } from "@/serializers"
 
-  protected registerDefaultView() {
-    const defaultView = this.addView("default")
-    defaultView.addfields(
-      "id",
-      "email",
-      "firstName",
-      "lastName",
-      "isAdmin",
-      "createdAt"
-    )
+class UserSerializer extends recordSculptor.Base<User> {}
 
-    defaultView.addField(
-      "displayName",
-      (user: User): string => `${user.firstName} ${user.lastName}`,
-    )
-    return defaultView
-  }
-}
+ // Default view, put common stuff here, but prefer named views for anything specific or complex
+UserSerializer.addView((view) => {
+  view.addFields("id", "email", "firstName", "lastName" "isAdmin", "createdAt")
+
+  view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+})
+
+// Reuses all the fields from the default view, and adds a new roles field
+UserSerializer.addView("table", (view) => {
+  view.addField("roles", (roles: Role): string[] => roles.map((r) => r.name))
+})
+
+// Reuses all the fields from the default view, and makes use of another serializer
+UserSerializer.addView("detailed", (view) => {
+  view.addField("roles", (roles: Role) => RoleSerializer.serialize(roles))
+})
+```
+
+```typescript
+// src/serializers/role-serializer.ts
+import recordSculptor from "record-sculptor"
+
+import { Role } from "@/models"
+
+class RoleSerializer extends recordSculptor.Base<Role> {}
+
+UserSerializer.addView((view) => {
+  view.addFields("id", "userId", "name")
+})
 ```
 
 ```typescript
@@ -59,7 +69,7 @@ export const router = express.Router()
 router.get("/users", (request: Request, response: Response) => {
   await const users = User.findAll() // Retrieval from database, using Sequelize in this example
 
-  const serializedUsers = UserSerializer.serialize(users) // Data presentation/serialization
+  const serializedUsers = UserSerializer.serialize(users, { view: "table" }) // Data presentation/serialization
 
   return response.status(200).json({ data: serializedUsers }) // Send data
 })
@@ -71,7 +81,7 @@ router.get("/users/:id", (request: Request, response: Response) => {
     return response.status(404).json({ message: "User not found" }) // Handle errors
   }
 
-  const serializedUser = UserSerializer.serialize(user) // Data presentation/serialization
+  const serializedUser = UserSerializer.serialize(user, { view: "detailed" }) // Data presentation/serialization
 
   response.status(200).json({ data: serializedUser }) // Send data
 })
@@ -95,6 +105,7 @@ class User {
 ```
 
 ```typescript
+// src/modles/role.ts
 class Role {
   constructor(
     public id: number,
