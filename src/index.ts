@@ -1,3 +1,10 @@
-export * from "./field"
-export * from "./view"
-export * from "./base"
+import { Base } from "./base"
+import { Field } from "./field"
+import { View } from "./view"
+
+
+export default {
+  Base,
+  Field,
+  View,
+}

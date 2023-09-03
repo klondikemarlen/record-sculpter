@@ -4,7 +4,7 @@ import { View } from "./view"
 
 type SerializationOptions = { view?: string }
 
-export default class BaseSerializer<Model extends Record<string, any>> {
+export class Base<Model extends Record<string, any>> {
   protected views: Record<string, View<Model>>
   protected models: Model[]
   protected model: Model
