@@ -122,4 +122,4 @@ See [examples/README.md](./examples/README.md)
 
 ## Future Development
 
-TODO: move away from lodash after I've built the basics to keep the project light.
+TODO: move away from lodash after I've built the basics, so as to keep this project light.
