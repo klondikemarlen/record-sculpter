@@ -106,7 +106,7 @@ class Role {
 
 ### More Realistic Usage
 
-See [examples/REAMDME.md](./examples/REAMDME.md)
+See [examples/README.md](./examples/README.md)
 
 ## Development
 
