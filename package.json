@@ -7,7 +7,7 @@
     "build": "tsc",
     "prettier": "prettier . --write",
     "eslint": "eslint --fix src/**/*.ts tests/**/*.ts",
-    "test": "jest"
+    "test": "jest --watch --onlyChanged"
   },
   "repository": {
     "type": "git",

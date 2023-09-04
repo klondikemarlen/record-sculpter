@@ -1,24 +1,6 @@
 import recordSculptor from "../src/index"
+import { User, Role } from "./support/index"
 
-class Role {
-  constructor(
-    public id: number,
-    public userId: number,
-    public name: string,
-  ) {}
-}
-
-class User {
-  constructor(
-    public id: number,
-    public email: string,
-    public firstName: string,
-    public lastName: string,
-    public isAdmin?: boolean,
-    public createdAt?: Date,
-    public roles?: Array<Role>,
-  ) {}
-}
 
 class UserSerializer extends recordSculptor.Base<User> {
   constructor(userOrUsers: User | User[]) {
@@ -40,27 +22,55 @@ class UserSerializer extends recordSculptor.Base<User> {
   // #registerTableView() {}
 }
 
-test("Serialization works against an array", () => {
-  const users = [
-    new User(1, "john.doe@example.com", "John", "Doe", true, new Date("2021-01-01T12:00:00Z"), [
-      new Role(1, 1, "Admin"),
-      new Role(2, 1, "Editor"),
-    ]),
-    new User(2, "jane.doe@example.com", "Jane", "Doe", false, new Date("2021-02-01T12:00:00Z"), [
-      new Role(3, 2, "User"),
-    ]),
-    new User(
-      3,
-      "mike.smith@example.com",
-      "Mike",
-      "Smith",
-      false,
-      new Date("2021-03-01T12:00:00Z"),
-      [new Role(4, 3, "User"), new Role(5, 3, "Contributor")],
-    ),
-  ]
-  expect(UserSerializer.serialize(users)).toEqual([
-    {
+const users = [
+  new User(1, "john.doe@example.com", "John", "Doe", true, new Date("2021-01-01T12:00:00Z"), [
+    new Role(1, 1, "Admin"),
+    new Role(2, 1, "Editor"),
+  ]),
+  new User(2, "jane.doe@example.com", "Jane", "Doe", false, new Date("2021-02-01T12:00:00Z"), [
+    new Role(3, 2, "User"),
+  ]),
+  new User(3, "mike.smith@example.com", "Mike", "Smith", false, new Date("2021-03-01T12:00:00Z"), [
+    new Role(4, 3, "User"),
+    new Role(5, 3, "Contributor"),
+  ]),
+]
+
+describe("#serialize", () => {
+  test("serializes an array", () => {
+    expect(UserSerializer.serialize(users)).toEqual([
+      {
+        createdAt: new Date("2021-01-01T12:00:00Z"),
+        displayName: "John Doe",
+        email: "john.doe@example.com",
+        firstName: "John",
+        id: 1,
+        isAdmin: true,
+        lastName: "Doe",
+      },
+      {
+        createdAt: new Date("2021-02-01T12:00:00Z"),
+        displayName: "Jane Doe",
+        email: "jane.doe@example.com",
+        firstName: "Jane",
+        id: 2,
+        isAdmin: false,
+        lastName: "Doe",
+      },
+      {
+        createdAt: new Date("2021-03-01T12:00:00Z"),
+        displayName: "Mike Smith",
+        email: "mike.smith@example.com",
+        firstName: "Mike",
+        id: 3,
+        isAdmin: false,
+        lastName: "Smith",
+      },
+    ])
+  })
+
+  test("serializes single objects", () => {
+    expect(UserSerializer.serialize(users[0])).toEqual({
       createdAt: new Date("2021-01-01T12:00:00Z"),
       displayName: "John Doe",
       email: "john.doe@example.com",
@@ -68,26 +78,8 @@ test("Serialization works against an array", () => {
       id: 1,
       isAdmin: true,
       lastName: "Doe",
-    },
-    {
-      createdAt: new Date("2021-02-01T12:00:00Z"),
-      displayName: "Jane Doe",
-      email: "jane.doe@example.com",
-      firstName: "Jane",
-      id: 2,
-      isAdmin: false,
-      lastName: "Doe",
-    },
-    {
-      createdAt: new Date("2021-03-01T12:00:00Z"),
-      displayName: "Mike Smith",
-      email: "mike.smith@example.com",
-      firstName: "Mike",
-      id: 3,
-      isAdmin: false,
-      lastName: "Smith",
-    },
-  ])
+    },)
+  })
 })
 
 // Until I get a test suite spun up, these are the tests :cry:
