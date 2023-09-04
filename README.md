@@ -37,12 +37,12 @@ UserSerializer.addView((view) => {
 
 // Reuses all the fields from the default view, and adds a new roles field
 UserSerializer.addView("table", (view) => {
-  view.addField("roles", (roles: Role): string[] => roles.map((r) => r.name))
+  view.addField("roles", (user: User): string[] => user.roles.map((r) => r.name))
 })
 
 // Reuses all the fields from the default view, and makes use of another serializer
 UserSerializer.addView("detailed", (view) => {
-  view.addField("roles", (roles: Role) => RoleSerializer.serialize(roles))
+  view.addField("roles", (user: User) => RoleSerializer.serialize(user.roles))
 })
 ```
 
