@@ -9,10 +9,6 @@ class UserSerializer extends Serializer<User> {
 
       view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
     })
-
-    this.addView("detailed", (view) => {
-      view.addField('roles', (user: User): Array<Role> => user.roles)
-    })
   }
 }
 
@@ -21,10 +17,6 @@ class UserSerializer extends Serializer<User> {
 //     view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
 
 //     view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
-//   })
-
-//   addView("detailed", (view) => {
-//     view.addField('roles', (user: User): Array<Role> => user.roles)
 //   })
 // })
 
