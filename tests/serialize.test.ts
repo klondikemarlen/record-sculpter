@@ -1,25 +1,6 @@
 import { Serializer } from "../src/index"
 import { User, Role } from "./support/index"
 
-class UserSerializer extends Serializer<User> {
-  constructor(userOrUsers: User | Array<User>) {
-    super(userOrUsers)
-    this.addView((view) => {
-      view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
-
-      view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
-    })
-  }
-}
-
-// export const UserSerializer = Serializer.define<User>(({ addView }) => {
-//   addView((view) => {
-//     view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
-
-//     view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
-//   })
-// })
-
 const users = [
   new User(1, "john.doe@example.com", "John", "Doe", true, new Date("2021-01-01T12:00:00Z"), [
     new Role(1, 1, "Admin"),
@@ -34,10 +15,53 @@ const users = [
   ]),
 ]
 
-describe("#serialize", () => {
-  test("serializes an array", () => {
-    expect(UserSerializer.serialize(users)).toEqual([
-      {
+describe("Class style setup", () => {
+  class UserSerializer extends Serializer<User> {
+    constructor(userOrUsers: User | Array<User>) {
+      super(userOrUsers)
+      this.addView((view) => {
+        view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+
+        view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+      })
+    }
+  }
+
+  describe("#serialize", () => {
+    test("serializes an array", () => {
+      expect(UserSerializer.serialize(users)).toEqual([
+        {
+          createdAt: new Date("2021-01-01T12:00:00Z"),
+          displayName: "John Doe",
+          email: "john.doe@example.com",
+          firstName: "John",
+          id: 1,
+          isAdmin: true,
+          lastName: "Doe",
+        },
+        {
+          createdAt: new Date("2021-02-01T12:00:00Z"),
+          displayName: "Jane Doe",
+          email: "jane.doe@example.com",
+          firstName: "Jane",
+          id: 2,
+          isAdmin: false,
+          lastName: "Doe",
+        },
+        {
+          createdAt: new Date("2021-03-01T12:00:00Z"),
+          displayName: "Mike Smith",
+          email: "mike.smith@example.com",
+          firstName: "Mike",
+          id: 3,
+          isAdmin: false,
+          lastName: "Smith",
+        },
+      ])
+    })
+
+    test("serializes single objects", () => {
+      expect(UserSerializer.serialize(users[0])).toEqual({
         createdAt: new Date("2021-01-01T12:00:00Z"),
         displayName: "John Doe",
         email: "john.doe@example.com",
@@ -45,37 +69,63 @@ describe("#serialize", () => {
         id: 1,
         isAdmin: true,
         lastName: "Doe",
-      },
-      {
-        createdAt: new Date("2021-02-01T12:00:00Z"),
-        displayName: "Jane Doe",
-        email: "jane.doe@example.com",
-        firstName: "Jane",
-        id: 2,
-        isAdmin: false,
-        lastName: "Doe",
-      },
-      {
-        createdAt: new Date("2021-03-01T12:00:00Z"),
-        displayName: "Mike Smith",
-        email: "mike.smith@example.com",
-        firstName: "Mike",
-        id: 3,
-        isAdmin: false,
-        lastName: "Smith",
-      },
-    ])
+      })
+    })
+  })
+})
+
+describe("Serializer.define style setup", () => {
+  const UserSerializer = Serializer.define<User>(({ addView }) => {
+    addView((view) => {
+      view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+
+      view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+    })
   })
 
-  test("serializes single objects", () => {
-    expect(UserSerializer.serialize(users[0])).toEqual({
-      createdAt: new Date("2021-01-01T12:00:00Z"),
-      displayName: "John Doe",
-      email: "john.doe@example.com",
-      firstName: "John",
-      id: 1,
-      isAdmin: true,
-      lastName: "Doe",
+  describe("#serialize", () => {
+    test("serializes an array", () => {
+      expect(UserSerializer.serialize(users)).toEqual([
+        {
+          createdAt: new Date("2021-01-01T12:00:00Z"),
+          displayName: "John Doe",
+          email: "john.doe@example.com",
+          firstName: "John",
+          id: 1,
+          isAdmin: true,
+          lastName: "Doe",
+        },
+        {
+          createdAt: new Date("2021-02-01T12:00:00Z"),
+          displayName: "Jane Doe",
+          email: "jane.doe@example.com",
+          firstName: "Jane",
+          id: 2,
+          isAdmin: false,
+          lastName: "Doe",
+        },
+        {
+          createdAt: new Date("2021-03-01T12:00:00Z"),
+          displayName: "Mike Smith",
+          email: "mike.smith@example.com",
+          firstName: "Mike",
+          id: 3,
+          isAdmin: false,
+          lastName: "Smith",
+        },
+      ])
+    })
+
+    test("serializes single objects", () => {
+      expect(UserSerializer.serialize(users[0])).toEqual({
+        createdAt: new Date("2021-01-01T12:00:00Z"),
+        displayName: "John Doe",
+        email: "john.doe@example.com",
+        firstName: "John",
+        id: 1,
+        isAdmin: true,
+        lastName: "Doe",
+      })
     })
   })
 })

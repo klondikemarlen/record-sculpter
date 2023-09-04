@@ -4,8 +4,24 @@ import { View } from "./view"
 
 type SerializationOptions = { view?: string }
 type ViewSetupFunction<Model extends Record<string, any>> = (view: View<Model>) => void
+type SerializerSetupFunction<Model extends Record<string, any>> = (context: {
+  addView: Serializer<Model>['addView']
+}) => void
 
 export class Serializer<Model extends Record<string, any>> {
+  static define<Model extends Record<string, any>>(
+    setupFunction: SerializerSetupFunction<Model>,
+  ): typeof Serializer<Model> {
+    const Derived = class extends Serializer<Model> {
+      constructor(modelOrModels: Model | Array<Model>) {
+        super(modelOrModels)
+        setupFunction({ addView: this.addView.bind(this) })
+      }
+    }
+
+    return Derived
+  }
+
   public static serialize<Model extends Record<string, any>>(
     modelOrModels: Model | Model[],
     options: SerializationOptions = {},
@@ -44,10 +60,16 @@ export class Serializer<Model extends Record<string, any>> {
 
   public addView(setupFunction: ViewSetupFunction<Model>): View<Model>
   public addView(viewName: string, setupFunction: ViewSetupFunction<Model>): View<Model>
-  public addView(viewNameOrSetupFunction: string | ViewSetupFunction<Model>, setupFunction?: ViewSetupFunction<Model>): View<Model>
-  public addView(viewNameOrSetupFunction: string | ViewSetupFunction<Model>, setupFunction?: ViewSetupFunction<Model>): View<Model> {
-    let viewName;
-    let definiteSetupFunction;
+  public addView(
+    viewNameOrSetupFunction: string | ViewSetupFunction<Model>,
+    setupFunction?: ViewSetupFunction<Model>,
+  ): View<Model>
+  public addView(
+    viewNameOrSetupFunction: string | ViewSetupFunction<Model>,
+    setupFunction?: ViewSetupFunction<Model>,
+  ): View<Model> {
+    let viewName
+    let definiteSetupFunction
     if (typeof viewNameOrSetupFunction === "function") {
       definiteSetupFunction = viewNameOrSetupFunction
       viewName = "default"
