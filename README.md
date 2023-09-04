@@ -73,14 +73,14 @@ router.get("/users", async (request: Request, response: Response) => {
 
   const serializedUsers = UserSerializer.serialize(users, { view: "table" }) // Data presentation/serialization
 
-  return response.status(200).json({ data: serializedUsers }) // Send data
+  return response.status(200).json({ users: serializedUsers }) // Send data
 })
 
 router.post("/users", async (request: Request, response: Response) => {
   const newAttributes = request.body
 
   return User.create(newAttributes).then(user => { // Save to database, using Sequelize in this example
-    const serializedUsers = UserSerializer.serialize(users, { view: "detailed" }) // Data presentation/serialization
+    const serializedUser = UserSerializer.serialize(user, { view: "detailed" }) // Data presentation/serialization
 
     return response.status(201).json({ user: serializedUser }) // Send data
   }).catch(error => {
@@ -98,7 +98,43 @@ router.get("/users/:id", async (request: Request, response: Response) => {
 
   const serializedUser = UserSerializer.serialize(user, { view: "detailed" }) // Data presentation/serialization
 
-  response.status(200).json({ data: serializedUser }) // Send data
+  return response.status(200).json({ user: serializedUser }) // Send data
+})
+
+router.put("/users/:id", async (request: Request, response: Response) => {
+  const id = request.params.id
+  const user = await User.findByPk(id) // Retrieval from database, using Sequelize in this example
+
+  if (user === null) {
+    return response.status(404).json({ message: "User not found" }) // Handle errors
+  }
+
+  const newAttributes = request.body
+  return user.update(newAttributes).then((updatedUser) => {
+    const serializedUser = UserSerializer.serialize(updatedUser, { view: "detailed" }) // Data presentation/serialization
+
+    return response.status(200).json({ user: serializedUser }) // Send data
+  }).catch(error => {
+    return response.status(422).json({ error: error.message }) // Handle errors
+  })
+})
+
+// Delete does use serializer as there is no point in returning anything
+router.delete("/users/:id", async (request: Request, response: Response) => {
+  const id = request.params.id
+  // You _could_ peform a direct delete with Sequelize, but that makes the code harder to read,
+  // and the optimization probably isn't worth it anyway.
+  const user = await User.findByPk(id) // Retrieval from database, using Sequelize in this example
+
+  if (user === null) {
+    return response.status(404).json({ message: "User not found" }) // Handle errors
+  }
+
+  return user.destroy().then(() => {
+    return response.status(204).send() // Send empty response implies success
+  }).catch(error => {
+    return response.status(422).json({ error: error.message }) // Handle errors
+  })
 })
 ```
 
