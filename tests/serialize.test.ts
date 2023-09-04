@@ -1,26 +1,32 @@
-import recordSculptor from "../src/index"
+import { Serializer } from "../src/index"
 import { User, Role } from "./support/index"
 
-
-class UserSerializer extends recordSculptor.Base<User> {
-  constructor(userOrUsers: User | User[]) {
+class UserSerializer extends Serializer<User> {
+  constructor(userOrUsers: User | Array<User>) {
     super(userOrUsers)
-    // this.#registerTableView()
+    this.addView((view) => {
+      view.addfields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+
+      view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+    })
+
+    this.addView("detailed", (view) => {
+      view.addField('roles', (user: User): Array<Role> => user.roles)
+    })
   }
-
-  protected registerDefaultView() {
-    const defaultView = this.addView("default")
-    defaultView.addfields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
-
-    defaultView.addField(
-      "displayName",
-      (user: User): string => `${user.firstName} ${user.lastName}`,
-    )
-    return defaultView
-  }
-
-  // #registerTableView() {}
 }
+
+// export const UserSerializer = Serializer.define<User>(({ addView }) => {
+//   addView((view) => {
+//     view.addfields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+
+//     view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+//   })
+
+//   addView("detailed", (view) => {
+//     view.addfield('roles', (user: User): Array<Role> => user.roles)
+//   })
+// })
 
 const users = [
   new User(1, "john.doe@example.com", "John", "Doe", true, new Date("2021-01-01T12:00:00Z"), [
@@ -78,7 +84,7 @@ describe("#serialize", () => {
       id: 1,
       isAdmin: true,
       lastName: "Doe",
-    },)
+    })
   })
 })
 
