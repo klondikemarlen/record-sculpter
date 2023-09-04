@@ -14,6 +14,8 @@ npm install --save record-sculptor
 
 ### Simplistic Usage
 
+See [examples/README.md](./examples/README.md) for a more realistic example.
+
 TODO: validate this code
 
 ```typescript
@@ -66,16 +68,29 @@ import { UserSerializer } from "@/serializers"
 
 export const router = express.Router()
 
-router.get("/users", (request: Request, response: Response) => {
-  await const users = User.findAll() // Retrieval from database, using Sequelize in this example
+router.get("/users", async (request: Request, response: Response) => {
+  await const users = await User.findAll() // Retrieval from database, using Sequelize in this example
 
   const serializedUsers = UserSerializer.serialize(users, { view: "table" }) // Data presentation/serialization
 
   return response.status(200).json({ data: serializedUsers }) // Send data
 })
 
-router.get("/users/:id", (request: Request, response: Response) => {
-  const user = User.findByPk(request.params.id) // Retrieval from database, using Sequelize in this example
+router.post("/users", async (request: Request, response: Response) => {
+  const newAttributes = request.body
+
+  return User.create(newAttributes).then(user => { // Save to database, using Sequelize in this example
+    const serializedUsers = UserSerializer.serialize(users, { view: "detailed" }) // Data presentation/serialization
+
+    return response.status(201).json({ user: serializedUser }) // Send data
+  }).catch(error => {
+    return response.status(422).json({ error: error.message }) // Handle errors
+  })
+})
+
+router.get("/users/:id", async (request: Request, response: Response) => {
+  const id = request.params.id
+  const user = await User.findByPk(id) // Retrieval from database, using Sequelize in this example
 
   if (user === null) {
     return response.status(404).json({ message: "User not found" }) // Handle errors
@@ -114,10 +129,6 @@ class Role {
   ) {}
 }
 ```
-
-### More Realistic Usage
-
-See [examples/README.md](./examples/README.md)
 
 ## Development
 
