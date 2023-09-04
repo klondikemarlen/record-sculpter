@@ -29,7 +29,7 @@ export class View<Model extends Record<string, any>> {
     )
   }
 
-  addfields(...methods: string[]): Field<Model>[] {
+  addFields(...methods: string[]): Field<Model>[] {
     return methods.map((method) => {
       return this.addField(method)
     })

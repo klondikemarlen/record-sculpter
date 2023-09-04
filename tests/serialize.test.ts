@@ -5,7 +5,7 @@ class UserSerializer extends Serializer<User> {
   constructor(userOrUsers: User | Array<User>) {
     super(userOrUsers)
     this.addView((view) => {
-      view.addfields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+      view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
 
       view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
     })
@@ -18,13 +18,13 @@ class UserSerializer extends Serializer<User> {
 
 // export const UserSerializer = Serializer.define<User>(({ addView }) => {
 //   addView((view) => {
-//     view.addfields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+//     view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
 
 //     view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
 //   })
 
 //   addView("detailed", (view) => {
-//     view.addfield('roles', (user: User): Array<Role> => user.roles)
+//     view.addField('roles', (user: User): Array<Role> => user.roles)
 //   })
 // })
 
