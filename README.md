@@ -260,7 +260,7 @@ To update your version number:
 
 1. `npm version patch` (see https://docs.npmjs.com/about-semantic-versioning)
 
-2. `npm publish` (see https://docs.npmjs.com/adding-dist-tags-to-packages)
+2. `npm run publish` (see https://docs.npmjs.com/adding-dist-tags-to-packages)
 
 3. `git push --tags` to push release tags.
 

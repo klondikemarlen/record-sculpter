@@ -12,7 +12,8 @@
     "clean": "rm -rf ./dist",
     "format": "prettier . --write",
     "lint": "eslint --fix src/**/*.ts tests/**/*.ts",
-    "test": "jest --watch --onlyChanged"
+    "test": "jest --watch --onlyChanged",
+    "publish": "npm run clean && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
