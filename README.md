@@ -4,8 +4,6 @@ A flexible library for serializing records into customizable views written in Ty
 
 ## Installation and Usage
 
-TODO: actually published this package, but it will likely look something like this:
-
 Using npm:
 
 ```
@@ -190,7 +188,7 @@ See https://www.freecodecamp.org/news/how-to-create-and-publish-your-first-npm-p
 
 3. Change into the new project directory.
 
-4. Run `npm link ../record-sculptor`
+4. Run `npm link ../record-sculptor`. Or if you are testing against a published version you can use `npm install record-sculptor`.
 
 5. Create a `test-record-sculptor-import.ts` file in the new project with this code in it.
 
@@ -230,6 +228,8 @@ See https://www.freecodecamp.org/news/how-to-create-and-publish-your-first-npm-p
 ### Publishing the Repo
 
 See https://www.freecodecamp.org/news/how-to-create-and-publish-your-first-npm-package/
+
+> `npm pack` will generate the tar file that npm publish will publish, use it to test if you are publishing what you want to publish.
 
 1. Run `npm login`
 
