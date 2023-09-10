@@ -24,36 +24,25 @@ import { User, Role } from "@/models"
 
 import { RoleSerializer } from "@/serializers"
 
-class UserSerializer extends Serializer<User> {
-  constructor(userOrUsers: User | Array<User>) {
-    super(userOrUsers)
+const UserSerializer = Serializer.define<User>(({ addView }) => {
+  // Default view, put common stuff here, but prefer named views for anything specific or complex
+  addView((view) => {
+    view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
 
-    // Default view, put common stuff here, but prefer named views for anything specific or complex
-    this.addView((view) => {
-      view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
-
-      view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
-    })
-
-    this.addTableView()
-    this.addDetailView()
-  }
+    view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+  })
 
   // Reuses all the fields from the default view, and adds a new roles field
   // TODO: implement this fallback to default feature
-  addTableView() {
-    this.addView("table", (view) => {
-      view.addField("roles", (user: User): string[] => user.roles.map((r) => r.name))
-    })
-  }
+  addView("table", (view) => {
+    view.addField("roles", (user: User): string[] => user.roles.map((r) => r.name))
+  })
 
   // Reuses all the fields from the default view, and makes use of another serializer
-  addDetailedView() {
-    this.addView("detailed", (view) => {
-      view.addField("roles", (user: User) => RoleSerializer.serialize(user.roles))
-    })
-  }
-}
+  addView("detailed", (view) => {
+    view.addField("roles", (user: User) => RoleSerializer.serialize(user.roles))
+  })
+})
 ```
 
 ```typescript
