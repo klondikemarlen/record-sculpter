@@ -18,30 +18,42 @@ TODO: validate this code
 
 ```typescript
 // src/serializers/user-serialiser.ts
-import recordSculptor from "record-sculptor"
+import { Serializer } from "record-sculptor"
 
 import { User, Role } from "@/models"
 
 import { RoleSerializer } from "@/serializers"
 
-class UserSerializer extends recordSculptor.Base<User> {}
+class UserSerializer extends Serializer<User> {
+  constructor(userOrUsers: User | Array<User>) {
+    super(userOrUsers)
 
- // Default view, put common stuff here, but prefer named views for anything specific or complex
-UserSerializer.addView((view) => {
-  view.addFields("id", "email", "firstName", "lastName" "isAdmin", "createdAt")
+    // Default view, put common stuff here, but prefer named views for anything specific or complex
+    this.addView((view) => {
+      view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
 
-  view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
-})
+      view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+    })
 
-// Reuses all the fields from the default view, and adds a new roles field
-UserSerializer.addView("table", (view) => {
-  view.addField("roles", (user: User): string[] => user.roles.map((r) => r.name))
-})
+    this.addTableView()
+    this.addDetailView()
+  }
 
-// Reuses all the fields from the default view, and makes use of another serializer
-UserSerializer.addView("detailed", (view) => {
-  view.addField("roles", (user: User) => RoleSerializer.serialize(user.roles))
-})
+  // Reuses all the fields from the default view, and adds a new roles field
+  // TODO: implement this fallback to default feature
+  addTableView() {
+    this.addView("table", (view) => {
+      view.addField("roles", (user: User): string[] => user.roles.map((r) => r.name))
+    })
+  }
+
+  // Reuses all the fields from the default view, and makes use of another serializer
+  addDetailedView() {
+    this.addView("detailed", (view) => {
+      view.addField("roles", (user: User) => RoleSerializer.serialize(user.roles))
+    })
+  }
+}
 ```
 
 ```typescript
@@ -67,7 +79,7 @@ import { UserSerializer } from "@/serializers"
 export const router = express.Router()
 
 router.get("/users", async (request: Request, response: Response) => {
-  await const users = await User.findAll() // Retrieval from database, using Sequelize in this example
+  const users = await User.findAll() // Retrieval from database, using Sequelize in this example
 
   const serializedUsers = UserSerializer.serialize(users, { view: "table" }) // Data presentation/serialization
 
@@ -77,13 +89,16 @@ router.get("/users", async (request: Request, response: Response) => {
 router.post("/users", async (request: Request, response: Response) => {
   const newAttributes = request.body
 
-  return User.create(newAttributes).then(user => { // Save to database, using Sequelize in this example
-    const serializedUser = UserSerializer.serialize(user, { view: "detailed" }) // Data presentation/serialization
+  return User.create(newAttributes)
+    .then((user) => {
+      // Save to database, using Sequelize in this example
+      const serializedUser = UserSerializer.serialize(user, { view: "detailed" }) // Data presentation/serialization
 
-    return response.status(201).json({ user: serializedUser }) // Send data
-  }).catch(error => {
-    return response.status(422).json({ error: error.message }) // Handle errors
-  })
+      return response.status(201).json({ user: serializedUser }) // Send data
+    })
+    .catch((error) => {
+      return response.status(422).json({ error: error.message }) // Handle errors
+    })
 })
 
 router.get("/users/:id", async (request: Request, response: Response) => {
@@ -108,13 +123,16 @@ router.put("/users/:id", async (request: Request, response: Response) => {
   }
 
   const newAttributes = request.body
-  return user.update(newAttributes).then((updatedUser) => {
-    const serializedUser = UserSerializer.serialize(updatedUser, { view: "detailed" }) // Data presentation/serialization
+  return user
+    .update(newAttributes)
+    .then((updatedUser) => {
+      const serializedUser = UserSerializer.serialize(updatedUser, { view: "detailed" }) // Data presentation/serialization
 
-    return response.status(200).json({ user: serializedUser }) // Send data
-  }).catch(error => {
-    return response.status(422).json({ error: error.message }) // Handle errors
-  })
+      return response.status(200).json({ user: serializedUser }) // Send data
+    })
+    .catch((error) => {
+      return response.status(422).json({ error: error.message }) // Handle errors
+    })
 })
 
 // Delete does use serializer as there is no point in returning anything
@@ -128,11 +146,14 @@ router.delete("/users/:id", async (request: Request, response: Response) => {
     return response.status(404).json({ message: "User not found" }) // Handle errors
   }
 
-  return user.destroy().then(() => {
-    return response.status(204).send() // Send empty response implies success
-  }).catch(error => {
-    return response.status(422).json({ error: error.message }) // Handle errors
-  })
+  return user
+    .destroy()
+    .then(() => {
+      return response.status(204).send() // Send empty response implies success
+    })
+    .catch((error) => {
+      return response.status(422).json({ error: error.message }) // Handle errors
+    })
 })
 ```
 
@@ -242,7 +263,6 @@ To update your version number:
 2. `npm publish` (see https://docs.npmjs.com/adding-dist-tags-to-packages)
 
 3. `git push --tags` to push release tags.
-
 
 ## Future Development
 
