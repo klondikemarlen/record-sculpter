@@ -29,6 +29,8 @@ export class View<Model extends Record<string, any>> {
     )
   }
 
+  // TODO: add includeView/includeViews
+
   addFields(...methods: string[]): Field<Model>[] {
     return methods.map((method) => {
       return this.addField(method)
