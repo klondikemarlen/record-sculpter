@@ -241,6 +241,8 @@ To update your version number:
 
 2. `npm publish` (see https://docs.npmjs.com/adding-dist-tags-to-packages)
 
+3. `git push --tags` to push release tags.
+
 
 ## Future Development
 
