@@ -1,10 +1,12 @@
 {
   "name": "record-sculptor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A flexible library for serializing records into customizable views written in TypeScript. Inspired by Blueprinter, Record Sculptor aims to provide a simple yet powerful way to present and manipulate data objects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "clean": "rm -rf ./dist",
