@@ -178,6 +178,63 @@ class Role {
 
 5. Run the test suite via `npm run test`
 
+## Publishing
+
+### Testing Publishability
+
+See https://www.freecodecamp.org/news/how-to-create-and-publish-your-first-npm-package/
+
+1. Build this project via `npm run clean && npm run build`
+
+2. Make a directory relative to the project directory called `test-record-sculptor-import`
+
+3. Change into the new project directory.
+
+4. Run `npm link ../record-sculptor`
+
+5. Create a `test-record-sculptor-import.ts` file in the new project with this code in it.
+
+   ```typescript
+   // test-record-sculptor-import/test-record-sculptor-import.ts
+
+   import { Serializer } from "record-sculptor"
+
+   class User {
+     constructor(
+       public id: number,
+       public email: string,
+       public firstName: string,
+       public lastName: string,
+       public isAdmin?: boolean,
+       public createdAt?: Date, // public roles?: Array<Role>
+     ) {}
+   }
+
+   const UserSerializer = Serializer.define<User>(({ addView }) => {
+     addView((view) => {
+       view.addFields("id", "email", "firstName", "lastName", "isAdmin", "createdAt")
+
+       view.addField("displayName", (user: User): string => `${user.firstName} ${user.lastName}`)
+     })
+   })
+
+   console.log(
+     UserSerializer.serialize(
+       new User(1, "john.doe@example.com", "John", "Doe", true, new Date("2021-01-01T12:00:00Z")),
+     ),
+   )
+   ```
+
+6. Run `npx ts-node test-record-sculpture-import.ts` and check that it prints the appropriate record info.
+
+### Publishing the Repo
+
+See https://www.freecodecamp.org/news/how-to-create-and-publish-your-first-npm-package/
+
+1. Run `npm login`
+
+2. Run `npm publish`
+
 ## Future Development
 
 TODO: move away from lodash after I've built the basics, so as to keep this project light.
