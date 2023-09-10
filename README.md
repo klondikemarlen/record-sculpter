@@ -233,7 +233,14 @@ See https://www.freecodecamp.org/news/how-to-create-and-publish-your-first-npm-p
 
 1. Run `npm login`
 
-2. Run `npm publish`
+2. Run `npm publish` or `npm publish --tag alpha` (defaults to latest)
+
+To update your version number:
+
+1. `npm version patch` (see https://docs.npmjs.com/about-semantic-versioning)
+
+2. `npm publish` (see https://docs.npmjs.com/adding-dist-tags-to-packages)
+
 
 ## Future Development
 
