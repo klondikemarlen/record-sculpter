@@ -47,15 +47,18 @@ const UserSerializer = Serializer.define<User>(({ addView }) => {
 
 ```typescript
 // src/serializers/role-serializer.ts
-import recordSculptor from "record-sculptor"
+import { serializer } from "record-sculptor"
 
 import { Role } from "@/models"
 
-class RoleSerializer extends recordSculptor.Base<Role> {}
-
-UserSerializer.addView((view) => {
-  view.addFields("id", "userId", "name")
-})
+class RoleSerializer extends Serializer<Role> {
+  constructor(roleOrRoles: Role | Array<Role>) {
+    super(roleOrRoles)
+    this.addView((view) => {
+      view.addFields("id", "userId", "name")
+    })
+  }
+}
 ```
 
 ```typescript
